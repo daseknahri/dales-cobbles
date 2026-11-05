@@ -1,0 +1,26 @@
+DALES & COBBLES — SITE PROFILE
+==============================
+Brand:        Dales & Cobbles
+Tagline:      Soap Spoilers · News · Gossip
+Niche:        UK soaps — Emmerdale + Coronation Street spoilers, news, gossip
+Audience:     The owner's Facebook groups (~54K members): Coronation Street News &
+              Spoilers; Emmerdale Fans Club x2; Emmerdale Absolute Spoilers & Gossips
+Locale:       en_GB public (Europe/London), admin en_US
+Domain:       https://dalesandcobbles.getemoji.site (temporary test subdomain;
+              a real domain is a later, owner-approved phase)
+Byline:       Dales & Cobbles Team (editorial byline — no invented persona)
+Content:      Articles only (vr_noun=article). NO recipe bundles / recipe schema.
+Pillars:      Emmerdale · Coronation Street · Spoilers · Soap News · Cast & Characters
+Trust pages:  About · Contact · Privacy Policy · Terms · Disclaimer ·
+              Editorial Policy · Cookie Policy
+Stack:        Style A self-seeding Docker repo (germ/deutsche-rezepte pattern):
+              WordPress php8.3-apache + MariaDB, site-init.sh + seed/seed.php,
+              viral-reader 1.9.37 + child theme dales-cobbles 1.0.0,
+              build-v9 (Automation Hamri) 9.48.0 vendored from plgin main
+Monetisation: AdSense ca-pub-6869205417923902 (getemoji.site family publisher).
+              Stage 1: ADSENSE_ENABLE=0, GA_ENABLE=0 — ads.txt served, no ads shown.
+Palette:      Dales green #14401F / #1E5631 · gold #E9B44C · brick #A63A28 ·
+              cream #FBF6EA · ink #1E221A · spoiler pink #FF4D8D (sparing accent)
+Type:         Headlines Anton (self-hosted); body Literata/serif + system sans
+Status:       Local build + QA only (2026-11-05). NOT deployed. GitHub repo,
+              Coolify project and DNS are the next phase, with owner approvals.

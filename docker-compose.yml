@@ -1,0 +1,38 @@
+services:
+  wordpress:
+    build: .
+    restart: unless-stopped
+    environment:
+      - SERVICE_FQDN_WORDPRESS_80
+      - SITE_URL=${SITE_URL:-https://dalesandcobbles.getemoji.site}
+      - SITE_EMAIL=${SITE_EMAIL:-daseknahri@gmail.com}
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_DB_USER=$SERVICE_USER_MYSQL
+      - WORDPRESS_DB_PASSWORD=$SERVICE_PASSWORD_MYSQL
+      - WP_ADMIN_USER=${WP_ADMIN_USER:-editor}
+      - WP_ADMIN_PASSWORD=$SERVICE_PASSWORD_WPADMIN
+      - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL:-daseknahri@gmail.com}
+      - ADSENSE_CLIENT=${ADSENSE_CLIENT:-ca-pub-6869205417923902}
+      - ADSENSE_PUB_ID=${ADSENSE_PUB_ID:-pub-6869205417923902}
+      - ADSENSE_ENABLE=${ADSENSE_ENABLE:-0}
+      - GA_ENABLE=${GA_ENABLE:-0}
+      - GA_MEASUREMENT_ID=${GA_MEASUREMENT_ID:-}
+      - HISTATS_ID=${HISTATS_ID:-off}
+    volumes:
+      - wp-data:/var/www/html
+    depends_on:
+      - db
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      - MYSQL_DATABASE=wordpress
+      - MYSQL_USER=$SERVICE_USER_MYSQL
+      - MYSQL_PASSWORD=$SERVICE_PASSWORD_MYSQL
+      - MYSQL_ROOT_PASSWORD=$SERVICE_PASSWORD_MYSQLROOT
+    volumes:
+      - db-data:/var/lib/mysql
+volumes:
+  wp-data:
+  db-data:

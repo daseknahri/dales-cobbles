@@ -1,0 +1,23 @@
+# Local QA only — NOT used by Coolify (compose file docker-compose.yml only).
+# Run:  docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+# Site on http://localhost:8096  (credentials + salts come from the local, gitignored .env)
+services:
+  wordpress:
+    ports:
+      - "8096:80"
+    environment:
+      - SERVICE_FQDN_WORDPRESS_80=localhost:8096
+      - SITE_URL=http://localhost:8096
+      - WP_ADMIN_PASSWORD=$WP_ADMIN_PASSWORD
+      - WP_ENVIRONMENT_TYPE=local
+      - ADSENSE_ENABLE=0
+      - GA_ENABLE=0
+      - HISTATS_ID=off
+      - WORDPRESS_AUTH_KEY=$WORDPRESS_AUTH_KEY
+      - WORDPRESS_SECURE_AUTH_KEY=$WORDPRESS_SECURE_AUTH_KEY
+      - WORDPRESS_LOGGED_IN_KEY=$WORDPRESS_LOGGED_IN_KEY
+      - WORDPRESS_NONCE_KEY=$WORDPRESS_NONCE_KEY
+      - WORDPRESS_AUTH_SALT=$WORDPRESS_AUTH_SALT
+      - WORDPRESS_SECURE_AUTH_SALT=$WORDPRESS_SECURE_AUTH_SALT
+      - WORDPRESS_LOGGED_IN_SALT=$WORDPRESS_LOGGED_IN_SALT
+      - WORDPRESS_NONCE_SALT=$WORDPRESS_NONCE_SALT
