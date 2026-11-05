@@ -1,0 +1,186 @@
+/* ===== Fonts (self-hosted) ===== */
+@font-face{font-family:"Literata";src:url("__THEME__/assets/fonts/literata-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Literata";src:url("__THEME__/assets/fonts/literata-600.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"Literata";src:url("__THEME__/assets/fonts/literata-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Literata";src:url("__THEME__/assets/fonts/literata-italic-400.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Anton";src:url("__THEME__/assets/fonts/Anton-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+
+/* ===== Brand tokens (the parent theme is fully token-driven) ===== */
+:root{
+  /* Dales & Cobbles — BRAND.md palette: Dales green primary, gold accent, Cobbles brick,
+     cream paper, ink; spoiler pink kept as a sparing accent (badges, spoiler elements).
+     Where a brand hex is too light for text on cream, a darker derivative is used and noted. */
+  --paper:#FBF6EA; --paper-soft:#F3ECDA; --surface:#FFFFFF;
+  --ink:#1E221A; --muted:#5C6355;
+  --olive:#14401F; --olive-dark:#0E2F17; --copper:#9A6B1F; --clay:#A63A28; --sage:#E7EDDE;
+  --gold:#E9B44C; --spoiler:#FF4D8D;
+  --eyebrow:#14401F; --line:#E3DCC6; --ad-label:#7A8172;
+  --footer:#10160F; --footer-ink:rgba(251,246,234,.86); --footer-hover:#E9B44C;
+  --hero-bg:#0E2F17; --hero-eyebrow:#E9B44C; --hero-rule:#E9B44C; --on-dark:#FFFBF2;
+  --serif:"Literata",Georgia,"Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --display:"Anton","Arial Narrow",var(--sans);
+  --measure:680px;
+  /* Category colours, one per pillar (fixed slugs set by the seed) */
+  --mood-emmerdale:#1E5631; --mood-corrie:#A63A28; --mood-spoilers:#C2185B; --mood-news:#14401F; --mood-cast:#7A5A1E;
+}
+
+/* Night reading: follows the phone's dark mode (many readers scroll FB in bed). */
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#141A13; --paper-soft:#1F291E; --surface:#27331F;
+    --ink:#F1F4E9; --muted:#AFBBA9; --olive:#A9CDB0; --olive-dark:#C6DEC9; --copper:#E9B44C; --clay:#E8A08D;
+    --sage:#26331F; --eyebrow:#A9CDB0; --line:rgba(241,244,233,.14); --ad-label:#AFBBA9;
+    color-scheme:dark;
+  }
+}
+
+/* ===== Display type: Anton headlines (BRAND.md) ===== */
+.entry-title,.post-card__title,.home-hero__title,.topic-tile__title,.site-brand__name{
+  font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.015em;
+}
+
+/* ===== Reading column ===== */
+body{font-family:var(--serif)}
+.entry-content{font-size:clamp(1.1rem,1rem + .45vw,1.24rem);line-height:1.78;letter-spacing:.002em}
+.entry-content p{margin:0 0 1.05em}
+.entry-content > p:first-of-type::first-letter{float:left;font-size:3.6em;line-height:.82;font-weight:700;margin:.06em .1em 0 0;color:var(--olive)}
+.entry-title{font-size:clamp(1.9rem,1.45rem + 2.2vw,2.8rem);line-height:1.12}
+.entry-excerpt{font-style:italic;color:var(--muted);font-size:1.12rem}
+.vr-breadcrumbs,.entry-tags,.entry-header .share-tools{display:none}
+.content-layout--single-post>*{min-width:0}
+.entry{max-width:100%}
+.entry img,.entry iframe,.entry video,.entry figure{max-width:100%}
+.entry-title,.entry-content{overflow-wrap:break-word}
+.entry-byline__meta,.content-chip,.eyebrow,.vr-btn,.site-nav,.post-card__meta,.topic-tile__count{font-family:var(--sans)}
+.entry-featured-media img{border-radius:14px}
+
+/* Reading progress bar in Dales green */
+.vr-progress{background:var(--olive);height:3px}
+
+/* Spoiler badge — the one place the pink shouts */
+.dc-spoiler-badge{display:inline-block;font:700 .72rem/1 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:#fff;background:var(--spoiler);border-radius:999px;padding:.45em .8em}
+
+/* Category-coloured chips */
+.content-chip,.topic-tile{--mood:var(--olive)}
+.cat-emmerdale,.category-emmerdale{--mood:var(--mood-emmerdale)}
+.cat-coronation-street,.category-coronation-street{--mood:var(--mood-corrie)}
+.cat-spoilers,.category-spoilers{--mood:var(--mood-spoilers)}
+.cat-soap-news,.category-soap-news{--mood:var(--mood-news)}
+.cat-cast-characters,.category-cast-characters{--mood:var(--mood-cast)}
+.post-card .content-chip{background:color-mix(in srgb,var(--mood) 12%,transparent);color:var(--mood);border-radius:999px;padding:.2em .7em;font-weight:600;font-size:.78rem}
+
+/* Cards: bigger, tappable, title-first for scrolling thumbs */
+.post-card{border-radius:16px;overflow:hidden}
+.post-card__title{font-size:1.22rem;line-height:1.25}
+.post-card__media img{aspect-ratio:4/3;object-fit:cover}
+
+/* ===== End of article ===== */
+.dc-end{margin:2.4rem 0 1rem;padding:1.5rem 1.4rem;border-radius:18px;background:var(--paper-soft);border:1px solid var(--line);text-align:center;font-family:var(--sans)}
+.dc-end__mark{display:block;width:44px;height:44px;margin:0 auto .6rem;border-radius:50%}
+.dc-end__q{font-family:var(--serif);font-size:1.25rem;font-style:italic;line-height:1.4;margin:0 0 1rem;color:var(--ink)}
+.dc-end__actions{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center}
+.dc-btn{display:inline-flex;align-items:center;gap:.45rem;border-radius:999px;padding:.75rem 1.2rem;font-weight:600;font-size:.98rem;text-decoration:none;border:0;cursor:pointer}
+.dc-btn--fb{background:#1877F2;color:#fff}
+.dc-btn--wa{background:#25D366;color:#073B1A}
+.dc-btn--more{background:var(--olive);color:#fff}
+.dc-btn:hover{filter:brightness(1.06);text-decoration:none;color:inherit}
+.dc-btn svg{width:18px;height:18px}
+.dc-share{position:relative;display:inline-flex}
+.dc-share__pop{position:absolute;bottom:calc(100% + 10px);right:0;z-index:70;display:none;flex-direction:column;gap:2px;min-width:190px;padding:.5rem;border-radius:14px;background:var(--surface);border:1px solid var(--line);box-shadow:0 14px 40px rgba(0,0,0,.22);text-align:left}
+.dc-share.is-open .dc-share__pop{display:flex}
+.dc-share__pop a,.dc-share__pop button{display:flex;align-items:center;gap:.6rem;padding:.55rem .7rem;border-radius:10px;font:600 .92rem/1 var(--sans);color:var(--ink);text-decoration:none;background:none;border:0;cursor:pointer;text-align:left;width:100%}
+.dc-share__pop a:hover,.dc-share__pop button:hover{background:var(--paper-soft);text-decoration:none;color:var(--ink)}
+
+.dc-next{display:grid;grid-template-columns:120px 1fr;gap:1rem;align-items:center;margin:1.6rem 0;padding:1rem;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);text-decoration:none;color:var(--ink)}
+.dc-next:hover{box-shadow:var(--shadow-lift);text-decoration:none;color:var(--ink)}
+.dc-next img{width:120px;height:120px;object-fit:cover;border-radius:12px}
+.dc-next__eyebrow{font-family:var(--sans);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--olive)}
+.dc-next__title{display:block;font-size:1.2rem;line-height:1.3;font-weight:600;margin-top:.25rem;font-family:var(--serif)}
+
+/* Sticky "next article" bar — ALWAYS dark (fixed colours; must not invert in dark mode). */
+.dc-bar{position:fixed;left:12px;right:12px;bottom:calc(12px + var(--dc-anchor,0px));z-index:60;display:flex;align-items:center;gap:.7rem;padding:.6rem .7rem;border-radius:16px;background:#10160F;color:#FBF6EA;box-shadow:0 14px 40px rgba(0,0,0,.28);font-family:var(--sans);text-decoration:none;transform:translateY(140%);transition:transform .35s ease}
+.dc-bar.is-on{transform:none}
+.dc-bar img{width:48px;height:48px;border-radius:10px;object-fit:cover;flex:none}
+.dc-bar__t{font-size:.86rem;line-height:1.25;flex:1;min-width:0}
+.dc-bar__t b{display:block;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:#E9B44C}
+.dc-bar__t span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:#FFFBF2}
+.dc-bar__go{flex:none;width:36px;height:36px;border-radius:50%;background:#1E5631;display:grid;place-items:center;color:#fff}
+.dc-bar__x{flex:none;background:none;border:0;color:#cbb;font-size:1.3rem;line-height:1;padding:.2rem .3rem;cursor:pointer}
+@media (min-width:900px){.dc-bar{left:auto;right:24px;bottom:24px;width:360px}}
+@media (prefers-reduced-motion:reduce){.dc-bar{transition:none}}
+
+/* Disclaimer line under every article */
+.dc-note{font-family:var(--sans);font-size:.8rem;color:var(--muted);text-align:center;margin:.4rem 0 0}
+.dc-follow{font-family:var(--sans);font-size:.88rem;color:var(--muted);text-align:center;margin:1rem 0 0}
+.dc-follow a{color:var(--olive);font-weight:600}
+
+/* Ads: in-feed slot spans the whole card row; header strip gets breathing room on phones */
+.dc-feed-ad{grid-column:1/-1;min-width:0;margin:.4rem 0}
+.dc-feed-ad .wpap-ad{margin:0 auto;max-width:728px}
+.vr-ad-strip{margin-top:.6rem}
+.dc-top .vr-ad-strip__inner{position:relative;overflow:hidden;display:block}
+.dc-top--m .vr-ad-strip__inner{width:100%;height:300px;min-height:300px;padding:12px 0}
+.dc-top--d .vr-ad-strip__inner{height:140px;min-height:140px}
+.vr-ad-strip.dc-top:has(ins.adsbygoogle[data-ad-status="unfilled"]){display:block}
+.dc-top-fb{display:none;position:absolute;inset:12px;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;padding:14px 18px;text-align:center;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.dc-top-fb:hover{text-decoration:none;color:var(--ink)}
+.dc-top-fb span{font:700 .64rem/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--eyebrow)}
+.dc-top-fb strong{font-family:var(--serif);font-size:1.18rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.dc-top-fb em{font:600 .95rem/1 var(--sans);font-style:normal;color:var(--olive)}
+.dc-top--d .dc-top-fb{flex-direction:row;gap:1rem;padding:8px 18px}
+.dc-top--d .dc-top-fb strong{-webkit-line-clamp:2;font-size:1.05rem}
+.dc-top:has(ins.adsbygoogle[data-ad-status="unfilled"]) .dc-top-fb{display:flex}
+.dc-top:not(:has(ins.adsbygoogle[data-ad-status])) .dc-top-fb{display:flex;visibility:hidden;animation:dc-fb-in 0s linear 4s forwards}
+@keyframes dc-fb-in{to{visibility:visible}}
+.entry-content .wpap-ad-incontent .adsbygoogle,.entry-content .wpap-ad-repeat .adsbygoogle{min-height:250px}
+.sidebar__block .wpap-ad{min-height:292px}
+@media (min-width:900px){
+  .entry-content .wpap-ad-repeat{display:none}
+}
+@media (max-width:899px){
+  .sidebar .widget_search,.sidebar .search-form{display:none}
+}
+
+/* Phone reading comfort */
+@media (max-width:600px){
+  .vr-container{width:calc(100vw - 28px)}
+  .entry-title{font-size:1.85rem;line-height:1.15}
+  .entry-content{font-size:1.125rem;line-height:1.75}
+  .entry-content > p:first-of-type::first-letter{font-size:3.1em}
+  .entry-excerpt{font-size:1.02rem}
+  .entry-featured-media img{border-radius:12px}
+  .dc-end{padding:1.2rem 1rem;margin-top:1.8rem}
+  .dc-end__actions{flex-direction:column}
+  .dc-btn{justify-content:center;width:100%;padding:.9rem 1rem;font-size:1.02rem}
+  .dc-next{grid-template-columns:88px 1fr;gap:.8rem;padding:.8rem}
+  .dc-next img{width:88px;height:88px}
+  .dc-next__title{font-size:1.05rem}
+  .post-card__title{font-size:1.14rem}
+}
+
+/* ===== Dales & Cobbles brand layer ===== */
+/* Home hero: the two-worlds scene (dales flowing into the cobbled street); a deep-green veil
+   darkens only the text side. Fixed image box = no layout shift. */
+.home-hero::after{background:linear-gradient(94deg,rgba(14,40,20,.92),rgba(14,40,20,.68) 48%,rgba(14,40,20,.05) 82%),linear-gradient(0deg,var(--paper),transparent 30%)}
+.home-hero__img{object-position:50% center}
+@media (max-width:700px){
+  .home-hero::after{background:linear-gradient(180deg,rgba(14,40,20,.85),rgba(14,40,20,.72) 60%,rgba(14,40,20,.3)),linear-gradient(0deg,var(--paper),transparent 25%)}
+}
+.home-hero .vr-btn{background:#FBF6EA;color:#14401F}
+.home-hero .vr-btn:hover{background:#fff;color:#0E2F17}
+
+/* Home intro strip */
+.dc-intro{margin:.9rem 0 0}
+.dc-intro__in{display:flex;align-items:center;gap:.9rem;padding:.8rem 1rem;border-radius:16px;background:var(--paper-soft);border:1px solid var(--line)}
+.dc-intro__img{flex:none;width:64px;height:64px;border-radius:50%;border:3px solid var(--olive);object-fit:cover;background:#F4EBDD}
+.dc-intro__t{min-width:0}
+.dc-intro__h{margin:0;font-family:var(--serif);font-weight:700;font-size:1.08rem;line-height:1.25;color:var(--olive)}
+.dc-intro__s{margin:.2rem 0 0;font-family:var(--sans);font-size:.92rem;line-height:1.4;color:var(--muted)}
+.dc-intro__s a{color:var(--olive);font-weight:600}
+@media (max-width:600px){.dc-intro__img{width:52px;height:52px}.dc-intro__h{font-size:1rem}.dc-intro__s{font-size:.86rem}}
+
+.author-box__avatar,.entry-byline__avatar{border-radius:50%;object-fit:cover}
+
+/* Ad label (parent theme falls back to its own wording when translations are not loaded). */
+:root{--vr-ad-label:"Advertisement"}
