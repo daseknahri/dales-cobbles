@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends unzip less mari
 COPY docker/le-cache.conf /etc/apache2/conf-available/le-cache.conf
 # Security headers, no Apache version banner, xmlrpc.php denied (see the file for what is
 # deliberately NOT set and why).
-COPY docker/le-security.conf /etc/apache2/conf-available/le-security.conf
-RUN a2enmod expires headers deflate && a2enconf le-cache le-security
+COPY docker/zz-security.conf /etc/apache2/conf-available/zz-security.conf
+RUN a2enmod expires headers deflate && a2enconf le-cache zz-security
 
 # Vendored theme + plugin + article bundles + brand profile. They are copied into the live wp-content on every
 # start, so a redeploy always ships the repo's versions (the wp-content volume keeps uploads + DB-managed state).
