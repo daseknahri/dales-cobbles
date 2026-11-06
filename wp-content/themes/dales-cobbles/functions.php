@@ -12,7 +12,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'DC_VERSION', '1.0.0' );
+define( 'DC_VERSION', '1.0.1' );
 define( 'DC_HERO_SIZES', '(max-width:1200px) 100vw, 1200px' );
 
 function dc_asset( $rel ) {
@@ -48,9 +48,12 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_add_inline_style( 'viral-reader', dc_minify_css( $css ) );
 }, 11 );
 
-/* Preload the reading font so the first paragraph paints in Literata, not a fallback. */
+/* Preload the reading font so the first paragraph paints in Literata, not a fallback.
+   Anton (headlines) is preloaded too: it is the display face of the H1/logo, and as WOFF2 it is
+   small enough (57 KB) that an early fetch beats the late swap flash. */
 add_action( 'wp_head', function () {
 	printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( dc_asset( 'fonts/literata-400.woff2' ) ) );
+	printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "\n", esc_url( dc_asset( 'fonts/Anton-Regular.woff2' ) ) );
 }, 2 );
 
 /* Third-party origins every page needs once ads/analytics are live (Site Kit gtag + AdSense):
@@ -132,7 +135,7 @@ add_filter( 'the_content', function ( $content ) {
 	if ( '' === $question ) { $question = 'What do you make of that, then? Tell a fellow fan — and mind the spoilers if they are not caught up!'; }
 
 	$out  = '<aside class="dc-end" aria-label="Your turn">';
-	$out .= '<img class="dc-end__mark" src="' . esc_url( dc_asset( 'brand/dales-cobbles-icon-512.png' ) ) . '" alt="" width="44" height="44">';
+	$out .= '<img class="dc-end__mark" src="' . esc_url( dc_asset( 'brand/icon-192.webp' ) ) . '" alt="" width="44" height="44" loading="lazy" decoding="async">';
 	$out .= '<p class="dc-end__q">' . esc_html( $question ) . '</p>';
 	$out .= '<div class="dc-end__actions">';
 	$out .= '<a class="dc-btn dc-btn--fb" href="https://www.facebook.com/sharer/sharer.php?u=' . $url . '" target="_blank" rel="noopener nofollow">' . dc_icon( 'fb' ) . 'Share on Facebook</a>';
@@ -332,7 +335,7 @@ add_action( 'wp_head', function () {
 function dc_home_intro() {
 	if ( ! is_front_page() || is_paged() ) { return; }
 	echo '<section class="dc-intro" aria-label="About Dales &amp; Cobbles"><div class="vr-container dc-intro__in">';
-	echo '<img class="dc-intro__img" src="' . esc_url( dc_asset( 'brand/dales-cobbles-icon-512.png' ) ) . '" alt="Dales &amp; Cobbles" width="64" height="64" loading="lazy" decoding="async">';
+	echo '<img class="dc-intro__img" src="' . esc_url( dc_asset( 'brand/icon-192.webp' ) ) . '" alt="Dales &amp; Cobbles" width="64" height="64" loading="lazy" decoding="async">';
 	echo '<div class="dc-intro__t"><p class="dc-intro__h">Ey up — welcome to Dales &amp; Cobbles</p>';
 	echo '<p class="dc-intro__s">Emmerdale and Coronation Street spoilers, news and gossip, written fan-to-fan. Spoilers are flagged, rumours are labelled — <a href="' . esc_url( home_url( '/about/' ) ) . '">more about us</a>.</p></div>';
 	echo '</div></section>';
@@ -399,7 +402,34 @@ add_filter( 'wp_get_attachment_image_attributes', function ( $attr, $att, $size 
 }, 10, 3 );
 add_filter( 'image_editor_output_format', function ( $formats ) {
 	$formats['image/jpeg'] = 'image/webp';
+	/* PNG uploads (brand mark, screenshots) otherwise keep PNG sub-sizes: the 512 brand icon's
+	   300px sub-size alone weighed 100 KB as PNG vs ~15 KB as WebP, and it is the author avatar
+	   shown at 40/72px on every article. Originals stay untouched (schema/site-icon source). */
+	$formats['image/png'] = 'image/webp';
 	return $formats;
+} );
+
+/* Site-icon tags: after the PNG→WebP sub-size conversion the generated 180px icon would be WebP,
+   which iOS ignores for apple-touch-icon. Pin the touch icon and the 32px favicon to the brand
+   pack's purpose-built PNGs; the 192px icon may stay a WebP sub-size (fine in modern browsers). */
+add_filter( 'site_icon_meta_tags', function ( $tags ) {
+	foreach ( $tags as $i => $tag ) {
+		if ( false !== strpos( $tag, 'apple-touch-icon' ) ) {
+			$tags[ $i ] = '<link rel="apple-touch-icon" href="' . esc_url( dc_asset( 'brand/apple-touch-180.png' ) ) . '" />';
+		} elseif ( false !== strpos( $tag, 'sizes="32x32"' ) ) {
+			$tags[ $i ] = '<link rel="icon" href="' . esc_url( dc_asset( 'brand/favicon-32.png' ) ) . '" sizes="32x32" />';
+		}
+	}
+	return $tags;
+} );
+
+/* YouTube embeds ([embed] in article bodies): the oEmbed iframe is heavy (player JS/CSS) and sits
+   below the featured image, so load it lazily instead of competing with the article's first paint. */
+add_filter( 'embed_oembed_html', function ( $html ) {
+	if ( false !== strpos( $html, '<iframe' ) && false === strpos( $html, 'loading=' ) ) {
+		$html = str_replace( '<iframe ', '<iframe loading="lazy" ', $html );
+	}
+	return $html;
 } );
 
 /* ---------- Home topic tiles: load cover photos only when scrolled into view ---------- */
