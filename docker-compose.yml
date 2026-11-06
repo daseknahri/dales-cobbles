@@ -19,6 +19,10 @@ services:
       - GA_ENABLE=${GA_ENABLE:-0}
       - GA_MEASUREMENT_ID=${GA_MEASUREMENT_ID:-}
       - HISTATS_ID=${HISTATS_ID:-off}
+      # WP_CACHE turns on the advanced-cache.php early-serve drop-in; DISALLOW_FILE_EDIT removes
+      # the wp-admin theme/plugin editor. The image's wp-config.php evals CONFIG_EXTRA on every
+      # load, so this reaches existing volumes too — never duplicate it with `wp config set`.
+      - WORDPRESS_CONFIG_EXTRA=define('WP_CACHE', true); define('DISALLOW_FILE_EDIT', true);
     volumes:
       - wp-data:/var/www/html
     depends_on:

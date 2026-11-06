@@ -19,6 +19,9 @@ for d in themes/viral-reader themes/dales-cobbles plugins/automation-hamri mu-pl
   mkdir -p "$(dirname /var/www/html/wp-content/$d)"
   cp -r "/opt/site/wp-content/$d" "/var/www/html/wp-content/$d"
 done
+# Page-cache early-serve drop-in (read by wp-settings.php when WP_CACHE is on; the mu-plugin
+# stays the storing/purging half). Synced like the rest of the vendored code.
+[ -f /opt/site/wp-content/advanced-cache.php ] && cp /opt/site/wp-content/advanced-cache.php /var/www/html/wp-content/advanced-cache.php
 # Fresh code ships on every start: drop the full-page cache so no visitor gets a pre-redeploy HTML snapshot.
 rm -rf /var/www/html/wp-content/cache/dc-page 2>/dev/null || true
 chown -R www-data:www-data /var/www/html/wp-content
@@ -31,6 +34,10 @@ if ! $WP core is-installed >/dev/null 2>&1; then
     --admin_email="${WP_ADMIN_EMAIL:-admin@example.com}" --skip-email
   $WP language core install en_GB --activate || log "en_GB language pack download failed (site stays en_US until retried)"
 fi
+
+# WP_CACHE + DISALLOW_FILE_EDIT come from WORDPRESS_CONFIG_EXTRA in the compose environment:
+# the image's wp-config.php evals it on every load (getenv_docker), so it applies to existing
+# volumes too — do NOT also `wp config set` them (that double-defines the constants).
 
 $WP theme activate dales-cobbles
 $WP plugin activate automation-hamri
@@ -46,4 +53,15 @@ chown -R www-data:www-data /var/www/html/wp-content/uploads 2>/dev/null || true
 if [ "$($WP option get dc_card_sizes_v1 2>/dev/null)" != "1" ]; then
   ( $WP media regenerate --only-missing --yes >/dev/null 2>&1 && $WP option update dc_card_sizes_v1 1 >/dev/null 2>&1 \
       && chown -R www-data:www-data /var/www/html/wp-content/uploads && log "card image sizes generated" ) &
+fi
+
+# One-time image refresh (child theme 1.0.1): rebuild the brand icon attachment's sub-sizes so the
+# PNG->WebP editor mapping applies to them. Its 300px PNG sub-size (100 KB) is the author avatar on
+# every article; as WebP it is ~15 KB. The original 512 PNG is never touched. Background, flag-guarded.
+if [ "$($WP option get dc_webp_brand_v1 2>/dev/null)" != "1" ]; then
+  ( ICON_ID=$($WP post list --post_type=attachment --meta_key=_dc_brand --meta_value=dales-cobbles-icon-512.png --field=ID 2>/dev/null | head -n 1)
+    if [ -n "$ICON_ID" ]; then
+      $WP media regenerate "$ICON_ID" --yes >/dev/null 2>&1 && $WP option update dc_webp_brand_v1 1 >/dev/null 2>&1 \
+        && chown -R www-data:www-data /var/www/html/wp-content/uploads && log "brand icon sub-sizes converted to WebP"
+    fi ) &
 fi

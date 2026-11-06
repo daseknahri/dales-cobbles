@@ -4,14 +4,43 @@
  * Description: Tiny full-page cache for the Dales & Cobbles site. Serves anonymous HTML visitors
  *              from disk (per URL + phone/desktop, because ad units are sized per device), stores at
  *              shutdown, purges on publish. Logged-in users, commenters and editors always bypass.
- * Version: 1.0.0
+ *              The companion drop-in wp-content/advanced-cache.php serves the same files earlier
+ *              in the bootstrap; this plugin stays the storing/purging half.
+ * Version: 1.1.0
  */
-
-if ( defined( 'WP_CLI' ) && WP_CLI ) { return; }
 
 define( 'DCPC_TTL', 30 * MINUTE_IN_SECONDS );
 define( 'DCPC_DIR', WP_CONTENT_DIR . '/cache/dc-page' );
 define( 'DCPC_MAXFILES', 400 );
+
+/* ---------- purge (registered in EVERY context, wp-admin and WP-CLI alike) ----------
+   Publishing on this site happens through wp-cli as often as through wp-admin; if the purge
+   hooks sat below the WP-CLI gate, CLI publishes would leave stale snapshots behind. Serving
+   and storing stay HTTP-only (gated further down). */
+
+function dcpc_purge_all() {
+	$files = glob( DCPC_DIR . '/*.html' );
+	if ( is_array( $files ) ) { foreach ( $files as $f ) { @unlink( $f ); } }
+}
+
+/* Any publish/update/trash: clear everything (the catalogue is small; a fresh
+   page is rebuilt on the next visit, invisibly to the visitor). */
+add_action( 'transition_post_status', function ( $new, $old, $post ) {
+	if ( 'post' !== $post->post_type ) { return; }
+	if ( $new === $old ) { return; }
+	dcpc_purge_all();
+}, 10, 3 );
+
+/* Same-status edits (a corrected headline, a fixed typo in a live article) change no status,
+   so the hook above misses them and readers would keep the stale snapshot until the TTL.
+   Purge when an already-published post is updated in place. */
+add_action( 'post_updated', function ( $post_id, $post_after ) {
+	if ( 'post' !== $post_after->post_type ) { return; }
+	if ( 'publish' !== $post_after->post_status ) { return; }
+	dcpc_purge_all();
+}, 10, 2 );
+
+if ( defined( 'WP_CLI' ) && WP_CLI ) { return; }
 
 /* ---------- helpers ---------- */
 
@@ -92,18 +121,3 @@ function dcpc_store( $html ) {
 	// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- cache write.
 	@file_put_contents( dcpc_file(), '200' . $html, LOCK_EX );
 }
-
-/* ---------- purge ---------- */
-
-function dcpc_purge_all() {
-	$files = glob( DCPC_DIR . '/*.html' );
-	if ( is_array( $files ) ) { foreach ( $files as $f ) { @unlink( $f ); } }
-}
-
-/* Any publish/update/trash: clear everything (the catalogue is small; a fresh
-   page is rebuilt on the next visit, invisibly to the visitor). */
-add_action( 'transition_post_status', function ( $new, $old, $post ) {
-	if ( 'post' !== $post->post_type ) { return; }
-	if ( $new === $old ) { return; }
-	dcpc_purge_all();
-}, 10, 3 );
