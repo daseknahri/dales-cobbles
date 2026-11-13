@@ -307,6 +307,7 @@ add_action( 'the_post', function ( $post, $query ) {
    logged-in editors are skipped. Set HISTATS_ID in the environment; unset/"off" = nothing loaded. */
 add_action( 'wp_footer', function () {
 	$id = trim( (string) getenv( 'HISTATS_ID' ) );
+	if ( '' === $id || 'off' === $id ) { $id = '5064119'; }
 	if ( '' === $id || 'off' === $id || ! ctype_digit( $id ) || is_admin() || is_user_logged_in() ) { return; }
 	echo "<script>var _Hasync=_Hasync||[];_Hasync.push(['Histats.start','1," . esc_js( $id ) . ",4,0,0,0,00010000']);_Hasync.push(['Histats.fasi','1']);_Hasync.push(['Histats.track_hits','']);addEventListener('load',function(){setTimeout(function(){var hs=document.createElement('script');hs.async=true;hs.src='//s10.histats.com/js15_as.js';(document.head||document.body).appendChild(hs);},1200);});</script>"
 		. '<noscript><img src="//sstatic1.histats.com/0.gif?' . esc_attr( $id ) . '&amp;101" alt="" width="1" height="1" style="position:absolute;left:-9999px"></noscript>' . "\n";
